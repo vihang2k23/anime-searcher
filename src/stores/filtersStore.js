@@ -18,7 +18,10 @@ export const useFiltersStore = defineStore("filters", () => {
   // Apply Filters
   const applyFilters = () => {
     const filters = [];
-    if (status.value) filters.push({ key: "Status: ", value: status.value });
+    console.log('status.value: ', status.value);
+    if (status.value && status.value !== 0 && status.value !== "default") {
+      filters.push({ key: "Status: ", value: status.value });
+    }
     if (type.value) filters.push({ key: "Type: ", value: type.value });
     appliedFilters.value = filters;
 
