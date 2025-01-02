@@ -1,10 +1,11 @@
 <template>
-  <v-container>
+
+  <v-container >
     <Filters @filter="applyFilters" @search="searchAnimes" />
 
     <AnimeTable
       :animes="animes"
-      :loading="loading"
+      :loading="isLoading"
       @toggle-favorite="toggleFavorite"
     />
   </v-container>
@@ -23,24 +24,21 @@ export default {
   setup() {
     const filtersStore = useFiltersStore();
     const store = useAnimeStore();
-    const { animes, total, loading, fetchAnimes, toggleFavorite } = store;
+    const { animes, total, isLoading, fetchAnimes, toggleFavorite } = store;
+    console.log('isLoading: ', isLoading);
 
     const limit = ref(5);
     const currentFilters = ref({});
 
     const searchAnimes = (query) => {
       console.log("query: ", query);
-      // const filters = [];
-      // if (query.status) filters.push({ key: "Status: ", value: query.status });
-      // if (query.type) filters.push({ key: "Type: ", value: query.type });
-      // if (query.search) filters.push({ key: "Type: ", value: query.search });
-      // filtersStore.appliedFilters = filters;
+
       fetchAnimes({ query, limit: limit.value });
     };
 
     const applyFilters = (filters) => {
       currentFilters.value = filters;
-      fetchAnimes({ ...filters, limit: limit.value });
+      // fetchAnimes({ ...filters, limit: limit.value });
     };
 
     const changePage = (page) => {
@@ -52,12 +50,12 @@ export default {
       fetchAnimes({ limit: limit.value, ...currentFilters.value });
     };
 
-    onMounted(() => fetchAnimes({ sort: "desc", limit: limit.value }));
+    // onMounted(() => fetchAnimes({ sort: "desc", limit: limit.value }));
 
     return {
       animes,
       total,
-      loading,
+      isLoading,
       searchAnimes,
       applyFilters,
       toggleFavorite,

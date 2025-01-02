@@ -62,8 +62,14 @@
           <v-toolbar-title>Anime Search</v-toolbar-title>
         </v-toolbar>
       </template>
+
       <!-- Custom Body -->
       <template v-slot:body="{ items }">
+        <!-- Loader when loading is true -->
+        <v-overlay :value="isLoading" absolute>
+          <v-progress-circular indeterminate color="primary" size="64" />
+        </v-overlay>
+
         <tr v-for="anime in items" :key="anime.mal_id">
           <td class="d-flex align-center h-auto py-2">
             <img
@@ -96,7 +102,6 @@
   </v-container>
 </template>
 
-
 <script>
 import { computed, onMounted, watch } from "vue";
 import { useAnimeStore } from "../stores/animeStore";
@@ -107,29 +112,16 @@ export default {
   setup() {
     const animeStore = useAnimeStore();
     const filtersStore = useFiltersStore();
-
+    const {  isLoading,fetchAnimes } = useAnimeStore();
     // Reactive values from the stores
     const animes = computed(() => animeStore.animes);
-    const loading = computed(() => animeStore.loading);
+   
     const favorites = computed(() => animeStore.favorites);
-
-    // Fetch filtered animes when the filters change
-    const fetchFilteredAnimes = () => {
-      const queryParams = {
-        status:
-          filtersStore.status === "default" || filtersStore.status === 0
-            ? ""
-            : filtersStore.status,
-        type: filtersStore.type,
-      };
-
-      animeStore.fetchAnimes(queryParams); // Pass filters to fetch function
-    };
 
     // Helper to check if the anime is a favorite
     const isFavorite = (anime) =>
       favorites.value.some((fav) => fav.mal_id === anime.mal_id);
-
+    
     // Remove individual filter
     const removeFilter = (key, value) => {
       console.log("value: ", value);
@@ -147,7 +139,7 @@ export default {
           filter.key !== key || filter.value !== value;
         }
       );
-
+ 
       if (filtersStore.appliedFilters.length < originalLength) {
         console.log(`Removed filter with key "${key}" and value "${value}".`);
 
@@ -171,11 +163,13 @@ export default {
 
     return {
       animes,
-      loading,
+    
       toggleFavorite: animeStore.toggleFavorite,
       isFavorite,
       removeFilter,
       clearFilters,
+      isLoading,
+      fetchAnimes,
       filtersStore,
       headers: [
         { title: "Title", key: "title", align: "start" },
@@ -190,7 +184,7 @@ export default {
 };
 </script>
 
-<style >
+<style>
 .elevation-1 {
   margin-top: 20px;
 }
@@ -199,6 +193,7 @@ td {
   padding: 8px;
   text-align: left;
 }
+
 .custom-avatar-img {
   width: 40px;
   height: 40px;

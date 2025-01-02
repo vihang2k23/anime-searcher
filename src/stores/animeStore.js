@@ -1,41 +1,61 @@
-
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { ref, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 
 const API_BASE_URL = 'https://api.jikan.moe/v4/anime';
 
 export const useAnimeStore = defineStore('anime', () => {
-  const animes = ref([]); 
+  const animes = ref([]);
   const favorites = ref(JSON.parse(localStorage.getItem('favorites')) || []);
   const loading = ref(false);
+  const error = ref(null); // Added error state
 
+  // Fetch anime data
   const fetchAnimes = async (queryParams = {}) => {
     loading.value = true;
+    error.value = null; // Reset error before fetching
     try {
       const response = await axios.get(API_BASE_URL, { params: queryParams });
       animes.value = Array.isArray(response.data.data) ? response.data.data : [];
-    } catch (error) {
-      console.error('Error fetching animes:', error);
-      animes.value = []; 
+    } catch (err) {
+      console.error('Error fetching animes:', err);
+      error.value = 'Failed to load anime data. Please try again later.'; // Set error message
+      animes.value = [];
     } finally {
       loading.value = false;
     }
   };
 
+  // Toggle anime in favorites
   const toggleFavorite = (anime) => {
-    const index = favorites.value.findIndex((fav) => fav.mal_id === anime.mal_id);
-    if (index === -1) {
-      favorites.value.push(anime);
+    const existingAnime = favorites.value.find((fav) => fav.mal_id === anime.mal_id);
+    if (existingAnime) {
+      favorites.value = favorites.value.filter((fav) => fav.mal_id !== anime.mal_id);
     } else {
-      favorites.value.splice(index, 1);
+      favorites.value.push(anime);
     }
   };
+
+  // Computed property for loading state (can be used in components)
+  const isLoading = computed(() => loading.value);
 
   // Persist favorites to localStorage
   watch(favorites, (newFavorites) => {
     localStorage.setItem('favorites', JSON.stringify(newFavorites));
   });
 
-  return { animes, favorites, loading, fetchAnimes, toggleFavorite };
+  // Optionally, fetch anime data on store initialization
+  onMounted(() => {
+    fetchAnimes(); // This can be adjusted based on whether you want auto-fetching or not
+  });
+
+  return { 
+    animes, 
+    favorites, 
+    loading, 
+    error, // Expose error to the component
+    isLoading, // Computed loading property
+    fetchAnimes, 
+    toggleFavorite 
+  };
 });

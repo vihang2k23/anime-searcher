@@ -58,7 +58,7 @@ export const useFiltersStore = defineStore("filters", () => {
     search.value = "";
     appliedFilters.value = [];
     // Trigger API call to fetch all animes without filters
-    animeStore.fetchAnimes();
+    // animeStore.fetchAnimes();
   };
 
   return {

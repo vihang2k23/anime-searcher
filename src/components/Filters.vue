@@ -2,7 +2,6 @@
   <v-container class="mb-4">
     <!-- Status Filters -->
     <v-row class="align-center">
-
       <v-tabs v-model="status" background-color="primary" grow class="border-b">
         <v-col cols="4" class="d-flex align-center">
           <v-tab
@@ -32,6 +31,7 @@
           v-model="search"
           label="Search Anime"
           @input="debouncedSearch"
+          @click:clear="debouncedSearch"
           class="mt-4"
           clearable
         />
@@ -40,9 +40,15 @@
 
     <!-- Apply Filters Button -->
     <div class="d-flex justify-center">
-      <v-btn color="primary" size="x-large" class="mt-4" @click="applyFilters"
-        >Apply Filters</v-btn
+      <v-btn
+        color="primary"
+        size="x-large"
+        class="mt-4"
+        @click="applyFilters"
+        :disabled="!(type || status > 0)"
       >
+        Apply Filters
+      </v-btn>
     </div>
   </v-container>
 </template>
@@ -122,28 +128,28 @@ export default {
       filtersStore.type = type.value;
 
       console.log("filters: ", filters);
-      filtersStore.applyFilters(filters); // Trigger the API call with the new filters
+      filtersStore.applyFilters(filters);
     };
 
     // Watch the store values to update the local component state
     watch(
       () => filtersStore.status,
       (newStatus) => {
-        status.value = Object.values(statusMapping).indexOf(newStatus); // Update status based on store
+        status.value = Object.values(statusMapping).indexOf(newStatus);
       }
     );
 
     watch(
       () => filtersStore.type,
       (newType) => {
-        type.value = newType; // Update type based on store
+        type.value = newType;
       }
     );
 
     watch(
       () => filtersStore.search,
       (newSearch) => {
-        search.value = newSearch; // Update search term based on store
+        search.value = newSearch;
       }
     );
 
