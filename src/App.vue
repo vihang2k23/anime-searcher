@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- Header -->
-    <v-app-bar app>
+    <v-app-bar color="primary" app>
       <v-toolbar-title>Anime Search Application</v-toolbar-title>
     </v-app-bar>
 
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
 };
 </script>
 

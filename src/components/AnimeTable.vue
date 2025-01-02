@@ -3,7 +3,15 @@
     <!-- Applied Filters -->
     <v-row class="mb-4 align-center">
       <!-- Status Filter Chip -->
-      <v-col class="d-flex align-center" v-if="filtersStore.status && filtersStore.status !== 'default' && filtersStore.status !== 0" cols="auto">
+      <v-col
+        class="d-flex align-center"
+        v-if="
+          filtersStore.status &&
+          filtersStore.status !== 'default' &&
+          filtersStore.status !== 0
+        "
+        cols="auto"
+      >
         <span class="font-black">Status: </span> &nbsp;
         <v-chip
           closable
@@ -64,17 +72,23 @@
               :src="anime.images.jpg.small_image_url"
               alt="Anime Image"
             />
-            <span class="text-center ml-3 font-weight-semibold">{{ anime.title }}</span>
+            <span class="text-center ml-3 font-weight-semibold">{{
+              anime.title
+            }}</span>
           </td>
           <td class="text-center">{{ anime.rank }}</td>
           <td class="text-center">{{ anime.type }}</td>
           <td class="text-center">{{ anime.status }}</td>
           <td class="text-end">
-       
-              <v-icon color="red"  @click="toggleFavorite(anime)" v-if=" isFavorite(anime)">mdi-heart</v-icon>
-              <v-icon  @click="toggleFavorite(anime)" v-else>mdi-heart-outline</v-icon>
-        
-            
+            <v-icon
+              color="red"
+              @click="toggleFavorite(anime)"
+              v-if="isFavorite(anime)"
+              >mdi-heart</v-icon
+            >
+            <v-icon @click="toggleFavorite(anime)" v-else
+              >mdi-heart-outline</v-icon
+            >
           </td>
         </tr>
       </template>
@@ -112,56 +126,42 @@ export default {
       animeStore.fetchAnimes(queryParams); // Pass filters to fetch function
     };
 
-    // Watch for changes in filters and fetch new animes
-    watch(
-      [filtersStore.status, filtersStore.type],
-      () => {
-        filtersStore.applyFilters(); // Update applied filters
-        fetchFilteredAnimes(); // Re-fetch the filtered data
-      },
-      { immediate: true }
-    );
-
     // Helper to check if the anime is a favorite
     const isFavorite = (anime) =>
       favorites.value.some((fav) => fav.mal_id === anime.mal_id);
 
-    // Fetch anime data on component mount
-    // onMounted(() => {
-    //   if (!animes.value.length) {
-    //     fetchFilteredAnimes(); // Initial fetch with default filters
-    //   }
-    // });
-
     // Remove individual filter
     const removeFilter = (key, value) => {
-  console.log("value: ", value);
-  console.log("key: ", key);
+      console.log("value: ", value);
+      console.log("key: ", key);
 
-  // Filter out the object with the specified key and value
-  const originalLength = filtersStore.appliedFilters.length;
-  console.log(' filtersStore.appliedFilters: ',  filtersStore.appliedFilters);
-  filtersStore.appliedFilters = filtersStore.appliedFilters.filter(
-    (filter) => 
-   { console.log('filter: ', filter)
-   filter.key !== key || filter.value !== value}
-  );
+      // Filter out the object with the specified key and value
+      const originalLength = filtersStore.appliedFilters.length;
+      console.log(
+        " filtersStore.appliedFilters: ",
+        filtersStore.appliedFilters
+      );
+      filtersStore.appliedFilters = filtersStore.appliedFilters.filter(
+        (filter) => {
+          console.log("filter: ", filter);
+          filter.key !== key || filter.value !== value;
+        }
+      );
 
-  if (filtersStore.appliedFilters.length < originalLength) {
-    console.log(`Removed filter with key "${key}" and value "${value}".`);
+      if (filtersStore.appliedFilters.length < originalLength) {
+        console.log(`Removed filter with key "${key}" and value "${value}".`);
 
-    // Clear the corresponding filter in the store
-    if (key === "Status") {
-      filtersStore.status = 0; // Reset the status filter
-    } else if (key === "Type") {
-      filtersStore.type = ""; // Reset the type filter
-    }
+        // Clear the corresponding filter in the store
+        if (key === "Status") {
+          filtersStore.status = 0; // Reset the status filter
+        } else if (key === "Type") {
+          filtersStore.type = ""; // Reset the type filter
+        }
 
-    // Reapply the filters
-    filtersStore.applyFilters(); // Call applyFilters to update the store with new filters
-  }
-};
-
+        // Reapply the filters
+        filtersStore.applyFilters(); // Call applyFilters to update the store with new filters
+      }
+    };
 
     // Clear all filters
     const clearFilters = () => {
@@ -178,11 +178,11 @@ export default {
       clearFilters,
       filtersStore,
       headers: [
-        { text: "Title", value: "title" },
-        { text: "Rank", value: "rank" },
-        { text: "Type", value: "type" },
-        { text: "Status", value: "status" },
-        { text: "Actions", value: "actions", sortable: false },
+        { title: "Title", key: "title", align: "start" },
+        { title: "Rank", key: "rank", align: "center" },
+        { title: "Type", key: "type", align: "center" },
+        { title: "Status", key: "status", align: "center" },
+        { title: "Actions", key: "actions", sortable: false, align: "end" },
       ],
       filteredAnimes: computed(() => animes.value),
     };
@@ -190,7 +190,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 .elevation-1 {
   margin-top: 20px;
 }
@@ -199,7 +199,7 @@ td {
   padding: 8px;
   text-align: left;
 }
-.custom-avatar-img{
+.custom-avatar-img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -210,7 +210,7 @@ td {
   margin-top: 20px;
 }
 
-th{
+th {
   font-weight: 700 !important;
 }
 

@@ -52,7 +52,7 @@ export default {
       fetchAnimes({ limit: limit.value, ...currentFilters.value });
     };
 
-    onMounted(() => fetchAnimes({ sort: "desc", limit: limit.value }));
+    // onMounted(() => fetchAnimes({ sort: "desc", limit: limit.value }));
 
     return {
       animes,
