@@ -1,3 +1,4 @@
+// stores/animeStore.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref, watch } from 'vue';
@@ -5,19 +6,18 @@ import { ref, watch } from 'vue';
 const API_BASE_URL = 'https://api.jikan.moe/v4/anime';
 
 export const useAnimeStore = defineStore('anime', () => {
-  const animes = ref(JSON.parse(localStorage.getItem('animes')) || []);
+  const animes = ref([]); // Initialize as an empty array
   const favorites = ref(JSON.parse(localStorage.getItem('favorites')) || []);
-  const total = ref(0);
   const loading = ref(false);
 
   const fetchAnimes = async (queryParams = {}) => {
     loading.value = true;
     try {
       const response = await axios.get(API_BASE_URL, { params: queryParams });
-      animes.value = response.data.data;
-      total.value = response.data.pagination.items.total;
+      animes.value = Array.isArray(response.data.data) ? response.data.data : [];
     } catch (error) {
       console.error('Error fetching animes:', error);
+      animes.value = []; // Clear on error
     } finally {
       loading.value = false;
     }
@@ -32,14 +32,10 @@ export const useAnimeStore = defineStore('anime', () => {
     }
   };
 
-  // Watchers to persist data to localStorage
-  watch(animes, (newAnimes) => {
-    localStorage.setItem('animes', JSON.stringify(newAnimes));
-  });
-
+  // Persist favorites to localStorage
   watch(favorites, (newFavorites) => {
     localStorage.setItem('favorites', JSON.stringify(newFavorites));
   });
 
-  return { animes, favorites, total, loading, fetchAnimes, toggleFavorite };
+  return { animes, favorites, loading, fetchAnimes, toggleFavorite };
 });
