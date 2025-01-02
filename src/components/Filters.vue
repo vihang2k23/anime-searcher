@@ -2,45 +2,47 @@
   <v-container class="mb-4">
     <!-- Status Filters -->
     <v-row class="align-center">
-    <v-tabs v-model="status" background-color="primary" grow class="border-b">
-      <v-col cols="4" class="d-flex align-center">
-      <v-tab
-        v-for="(tab, index) in statusOptions"
-        :key="index"
-        :value="index"
-        >{{ tab }}</v-tab
-      >
-      </v-col>
-    </v-tabs>
+
+      <v-tabs v-model="status" background-color="primary" grow class="border-b">
+        <v-col cols="4" class="d-flex align-center">
+          <v-tab
+            v-for="(tab, index) in statusOptions"
+            :key="index"
+            :value="index"
+            >{{ tab }}</v-tab
+          >
+        </v-col>
+      </v-tabs>
     </v-row>
 
     <v-row class="align-center">
       <v-col cols="2" class="d-flex align-center">
-    <!-- Type Filter -->
-    <v-select
-      v-model="type"
-      :items="typeOptions"
-      label="Filter by Type"
-      class="mt-4"
-      clearable
-    />
+        <!-- Type Filter -->
+        <v-select
+          v-model="type"
+          :items="typeOptions"
+          label="Filter by Type"
+          class="mt-4"
+          clearable
+        />
       </v-col>
       <v-col class="d-flex align-center">
-    <!-- Search Input -->
-    <v-text-field
-      v-model="search"
-      label="Search Anime"
-      @input="debouncedSearch"
-      class="mt-4"
-      clearable
-    />
+        <!-- Search Input -->
+        <v-text-field
+          v-model="search"
+          label="Search Anime"
+          @input="debouncedSearch"
+          class="mt-4"
+          clearable
+        />
       </v-col>
     </v-row>
 
-
     <!-- Apply Filters Button -->
     <div class="d-flex justify-center">
-    <v-btn color="primary" size="x-large" class="mt-4" @click="applyFilters">Apply Filters</v-btn>
+      <v-btn color="primary" size="x-large" class="mt-4" @click="applyFilters"
+        >Apply Filters</v-btn
+      >
     </div>
   </v-container>
 </template>
@@ -145,12 +147,20 @@ export default {
       }
     );
 
-    return { status, type, search, statusOptions, typeOptions, applyFilters, debouncedSearch };
+    return {
+      status,
+      type,
+      search,
+      statusOptions,
+      typeOptions,
+      applyFilters,
+      debouncedSearch,
+    };
   },
 };
 </script>
 <style>
-.v-tab--selected{
+.v-tab--selected {
   background: #1867c0 !important;
   color: white !important;
   border-radius: 5px !important;

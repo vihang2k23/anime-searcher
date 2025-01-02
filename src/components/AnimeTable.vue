@@ -2,23 +2,31 @@
   <v-container class="mb-4">
     <!-- Applied Filters -->
     <v-row class="mb-4 align-center">
-      <v-col
-        class="d-flex align-center"
-        v-for="(filter, index) in filtersStore.appliedFilters"
-        :key="index"
-        cols="auto"
-      >
-        <span class="font-black">{{ filter?.key }}</span> &nbsp;
+      <!-- Status Filter Chip -->
+      <v-col class="d-flex align-center" v-if="filtersStore.status && filtersStore.status !== 'default' && filtersStore.status !== 0" cols="auto">
+        <span class="font-black">Status: </span> &nbsp;
         <v-chip
           closable
-          @click:close="removeFilter(filter.key, filter?.value)"
+          @click:close="removeFilter('Status', filtersStore.status)"
           variant="elevated"
         >
-          {{ filter?.value }}
+          {{ filtersStore.status }}
         </v-chip>
       </v-col>
 
-      <!-- <v-btn >Clear All</v-btn> -->
+      <!-- Type Filter Chip -->
+      <v-col class="d-flex align-center" v-if="filtersStore.type" cols="auto">
+        <span class="font-black">Type: </span> &nbsp;
+        <v-chip
+          closable
+          @click:close="removeFilter('Type', filtersStore.type)"
+          variant="elevated"
+        >
+          {{ filtersStore.type }}
+        </v-chip>
+      </v-col>
+
+      <!-- Clear All Button -->
       <v-chip
         prepend-icon="mdi-delete"
         v-if="filtersStore.appliedFilters.length"
@@ -46,38 +54,34 @@
           <v-toolbar-title>Anime Search</v-toolbar-title>
         </v-toolbar>
       </template>
-
       <!-- Custom Body -->
       <template v-slot:body="{ items }">
         <tr v-for="anime in items" :key="anime.mal_id">
-          <td class="flex flex-col items-center justify-center space-y-2">
+          <td class="d-flex align-center h-auto py-2">
             <img
               v-if="anime?.images?.jpg?.small_image_url"
-              class="rounded-xl w-16 h-16"
+              class="rounded-xl custom-avatar-img"
               :src="anime.images.jpg.small_image_url"
               alt="Anime Image"
             />
-            <span class="text-center">{{ anime.title }}</span>
+            <span class="text-center ml-3 font-weight-semibold">{{ anime.title }}</span>
           </td>
           <td class="text-center">{{ anime.rank }}</td>
           <td class="text-center">{{ anime.type }}</td>
           <td class="text-center">{{ anime.status }}</td>
-          <td class="text-center">
-            <v-icon
-              color="red"
-              @click="toggleFavorite(anime)"
-              v-if="isFavorite(anime)"
-              >mdi-heart</v-icon
-            >
-            <v-icon @click="toggleFavorite(anime)" v-else
-              >mdi-heart-outline</v-icon
-            >
+          <td class="text-end">
+       
+              <v-icon color="red"  @click="toggleFavorite(anime)" v-if=" isFavorite(anime)">mdi-heart</v-icon>
+              <v-icon  @click="toggleFavorite(anime)" v-else>mdi-heart-outline</v-icon>
+        
+            
           </td>
         </tr>
       </template>
     </v-data-table>
   </v-container>
 </template>
+
 
 <script>
 import { computed, onMounted, watch } from "vue";
@@ -131,35 +135,33 @@ export default {
 
     // Remove individual filter
     const removeFilter = (key, value) => {
-      console.log("value: ", value);
-      console.log("key: ", key);
+  console.log("value: ", value);
+  console.log("key: ", key);
 
-      // Filter out the object with the specified key and value
-      const originalLength = filtersStore.appliedFilters.length;
-      filtersStore.appliedFilters = filtersStore.appliedFilters.filter(
-        (filter) => filter.key !== key || filter.value !== value
-      );
+  // Filter out the object with the specified key and value
+  const originalLength = filtersStore.appliedFilters.length;
+  console.log(' filtersStore.appliedFilters: ',  filtersStore.appliedFilters);
+  filtersStore.appliedFilters = filtersStore.appliedFilters.filter(
+    (filter) => 
+   { console.log('filter: ', filter)
+   filter.key !== key || filter.value !== value}
+  );
 
-      if (filtersStore.appliedFilters.length < originalLength) {
-        console.log(`Removed filter with key "${key}" and value "${value}".`);
+  if (filtersStore.appliedFilters.length < originalLength) {
+    console.log(`Removed filter with key "${key}" and value "${value}".`);
 
-        // Extract the filter key to clear from filtersStore
-        const filterKey = key.split(": ")[0].toLowerCase();
-        console.log("filterKey: ", filterKey);
+    // Clear the corresponding filter in the store
+    if (key === "Status") {
+      filtersStore.status = 0; // Reset the status filter
+    } else if (key === "Type") {
+      filtersStore.type = ""; // Reset the type filter
+    }
 
-        // Clear the corresponding filter in the store
-        if (filterKey === "status") {
-          filtersStore.status = ""; // Only reset the status filter
-        } else if (filterKey === "type") {
-          filtersStore.type = ""; // Only reset the type filter
-        } else if (filterKey === "search") {
-          filtersStore.search = ""; // Only reset the search filter
-        }
+    // Reapply the filters
+    filtersStore.applyFilters(); // Call applyFilters to update the store with new filters
+  }
+};
 
-        // Reapply the filters
-        filtersStore.applyFilters(); // Call applyFilters to update the store with new filters
-      }
-    };
 
     // Clear all filters
     const clearFilters = () => {
@@ -191,6 +193,25 @@ export default {
 <style scoped>
 .elevation-1 {
   margin-top: 20px;
+}
+
+td {
+  padding: 8px;
+  text-align: left;
+}
+.custom-avatar-img{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.elevation-1 {
+  margin-top: 20px;
+}
+
+th{
+  font-weight: 700 !important;
 }
 
 td {

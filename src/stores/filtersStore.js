@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { useAnimeStore } from "./animeStore"; // Import animeStore
+import { useAnimeStore } from "./animeStore";
 
 export const useFiltersStore = defineStore("filters", () => {
   const searchQuery = ref("");
@@ -10,22 +10,30 @@ export const useFiltersStore = defineStore("filters", () => {
   const page = ref(1);
   const limit = ref(5);
   const search = ref("");
-  const appliedFilters = ref([]); // Track applied filters
+  const appliedFilters = ref([]); 
 
-  // Access anime store
+
   const animeStore = useAnimeStore();
 
   // Apply Filters
   const applyFilters = () => {
+  
     const filters = [];
-    console.log('status.value: ', status.value);
+
+    // Check if status filter is set and not equal to default value
     if (status.value && status.value !== 0 && status.value !== "default") {
       filters.push({ key: "Status: ", value: status.value });
     }
-    if (type.value) filters.push({ key: "Type: ", value: type.value });
+
+    // Check if type filter is set
+    if (type.value) {
+      filters.push({ key: "Type: ", value: type.value });
+    }
+
+    // Update appliedFilters with the current filters
     appliedFilters.value = filters;
 
-    // Call the fetchAnimes method from animeStore with the current filter values
+    // Prepare query parameters for the API request
     const queryParams = {
       status:
         status.value == 0 || status.value == "default" ? "" : status.value,
@@ -35,9 +43,11 @@ export const useFiltersStore = defineStore("filters", () => {
       search: search.value,
       limit: limit.value,
     };
-    console.log("queryParams: ", queryParams);
 
-    // Trigger API call to fetch filtered animes
+    console.log("Applied Filters: ", filters);
+    console.log("Query Parameters: ", queryParams);
+
+    // Call the fetchAnimes method from animeStore with the current filter values
     animeStore.fetchAnimes(queryParams);
   };
 

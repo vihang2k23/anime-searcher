@@ -1,4 +1,4 @@
-// stores/animeStore.js
+
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref, watch } from 'vue';
@@ -6,7 +6,7 @@ import { ref, watch } from 'vue';
 const API_BASE_URL = 'https://api.jikan.moe/v4/anime';
 
 export const useAnimeStore = defineStore('anime', () => {
-  const animes = ref([]); // Initialize as an empty array
+  const animes = ref([]); 
   const favorites = ref(JSON.parse(localStorage.getItem('favorites')) || []);
   const loading = ref(false);
 
@@ -17,7 +17,7 @@ export const useAnimeStore = defineStore('anime', () => {
       animes.value = Array.isArray(response.data.data) ? response.data.data : [];
     } catch (error) {
       console.error('Error fetching animes:', error);
-      animes.value = []; // Clear on error
+      animes.value = []; 
     } finally {
       loading.value = false;
     }
