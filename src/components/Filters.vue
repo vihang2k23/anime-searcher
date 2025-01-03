@@ -10,7 +10,7 @@
           <v-tab
             v-for="(tab, index) in statusOptions"
             :key="index"
-            :value="index"
+             :value="index"
             >{{ tab }}</v-tab
           >
         </v-col>
@@ -116,32 +116,33 @@ export default {
 
     // Apply Filters Button
     const applyFilters = () => {
-      console.log("Search:", search.value);
-      console.log("Selected status:", status.value);
+  console.log("Search:", search.value);
+  console.log("Selected status:", status.value);
 
-      const mappedStatus = statusMapping[status.value];
-      const filters = {
-        search: filtersStore.search,
-        status: mappedStatus,
-        type: type.value,
-      };
+  const mappedStatus = statusMapping[status.value] || 'default';
+  const filters = {
+    search: filtersStore.search,
+    status: mappedStatus,
+    type: type.value,
+  };
 
-      // Update the filters store
-      filtersStore.status = mappedStatus;
-      filtersStore.type = type.value;
+  // Update the filters store
+  filtersStore.status = mappedStatus;
+  filtersStore.type = type.value;
 
-      console.log("filters: ", filters);
-      filtersStore.applyFilters(filters);
-    };
+  console.log("filters: ", filters);
+  filtersStore.applyFilters(filters);
+};
 
     // Watch the store values to update the local component state
     watch(
-      () => filtersStore.status,
-      (newStatus) => {
-        status.value = Object.values(statusMapping).indexOf(newStatus);
-      }
-    );
-
+  () => filtersStore.status,
+  (newStatus) => {
+    // Convert string status to numeric index
+    const statusIndex = Object.values(statusMapping).indexOf(newStatus);
+    status.value = statusIndex >= 0 ? statusIndex : 0; // Default to 0 if not found
+  }
+);
     watch(
       () => filtersStore.type,
       (newType) => {
