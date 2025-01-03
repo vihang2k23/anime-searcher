@@ -123,7 +123,7 @@ export default {
       { title: "Actions", key: "actions", sortable: false, align: "end" },
     ];
     const favorites = computed(() => animeStore.favorites);
-    const filteredAnimes = computed(() => animes.value);
+const filteredAnimes = computed(() => animes.value)
     // Helper to check if the anime is a favorite
     const isFavorite = (anime) =>
       favorites.value.some((fav) => fav.mal_id === anime.mal_id);
@@ -178,6 +178,7 @@ export default {
       fetchAnimes,
       filtersStore,
       headers,
+      filteredAnimes,
     };
   },
 };
