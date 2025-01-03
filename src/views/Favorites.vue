@@ -61,41 +61,34 @@
     </v-container>
   </template>
   
-  <script>
+  <script setup>
   import { computed } from "vue";
   import { useAnimeStore } from "../stores/animeStore";
   import { useRouter } from "vue-router";
   
-  export default {
-    name: "FavoritesPage",
-    setup() {
-        const headers= [
-          { title: "Title", key: "title", align: "start" },
-          { title: "Rank", key: "rank", align: "center" },
-          { title: "Type", key: "type", align: "center" },
-          { title: "Status", key: "status", align: "center" },
-          { title: "Actions", key: "actions", sortable: false, align: "end" },
-        ]
-      const animeStore = useAnimeStore();
-      const router = useRouter();
-      const favorites = computed(() => animeStore.favorites);
+  // Headers definition for the table
+  const headers = [
+    { title: "Title", key: "title", align: "start" },
+    { title: "Rank", key: "rank", align: "center" },
+    { title: "Type", key: "type", align: "center" },
+    { title: "Status", key: "status", align: "center" },
+    { title: "Actions", key: "actions", sortable: false, align: "end" },
+  ];
   
-      // Helper to check if the anime is a favorite
-      const isFavorite = (anime) =>
-        favorites.value.some((fav) => fav.mal_id === anime.mal_id);
+  // Anime store and router
+  const animeStore = useAnimeStore();
+  const router = useRouter();
   
-      // Go to Home Page
-      const goToHome = () => {
-        router.push({ name: "Home" }); 
-      };
+  // Computed property for favorites
+  const favorites = computed(() => animeStore.favorites);
   
-      return {
-        favorites,
-        isFavorite,
-        goToHome,
-        headers
-      };
-    },
+  // Helper to check if the anime is a favorite
+  const isFavorite = (anime) =>
+    favorites.value.some((fav) => fav.mal_id === anime.mal_id);
+  
+  // Navigation function
+  const goToHome = () => {
+    router.push({ name: "Home" });
   };
   </script>
   

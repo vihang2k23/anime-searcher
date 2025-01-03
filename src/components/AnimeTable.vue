@@ -102,88 +102,72 @@
   </v-container>
 </template>
 
-<script>
-import { computed, onMounted, watch } from "vue";
+<script setup>
+import { computed } from "vue";
 import { useAnimeStore } from "../stores/animeStore";
 import { useFiltersStore } from "../stores/filtersStore";
 
-export default {
-  name: "AnimeTable",
-  setup() {
-    const animeStore = useAnimeStore();
-    const filtersStore = useFiltersStore();
-    const { fetchAnimes } = useAnimeStore();
-    // Reactive values from the stores
-    const animes = computed(() => animeStore.animes);
-    const headers = [
-      { title: "Title", key: "title", align: "start" },
-      { title: "Rank", key: "rank", align: "center" },
-      { title: "Type", key: "type", align: "center" },
-      { title: "Status", key: "status", align: "center" },
-      { title: "Actions", key: "actions", sortable: false, align: "end" },
-    ];
-    const favorites = computed(() => animeStore.favorites);
-    const filteredAnimes = computed(() => animes.value);
-    const loading = computed(() => animeStore.loading);
-    // Helper to check if the anime is a favorite
-    const isFavorite = (anime) =>
-      favorites.value.some((fav) => fav.mal_id === anime.mal_id);
+// Initialize stores
+const animeStore = useAnimeStore();
+const filtersStore = useFiltersStore();
 
-    // Remove individual filter
-    const removeFilter = (key, value) => {
-      console.log("value: ", value);
-      console.log("key: ", key);
+// Reactive values from the stores
+const animes = computed(() => animeStore.animes);
+const headers = [
+  { title: "Title", key: "title", align: "start" },
+  { title: "Rank", key: "rank", align: "center" },
+  { title: "Type", key: "type", align: "center" },
+  { title: "Status", key: "status", align: "center" },
+  { title: "Actions", key: "actions", sortable: false, align: "end" },
+];
+const favorites = computed(() => animeStore.favorites);
+const filteredAnimes = computed(() => animes.value);
+const loading = computed(() => animeStore.loading);
 
-      // Filter out the object with the specified key and value
-      const originalLength = filtersStore.appliedFilters.length;
-      console.log(
-        " filtersStore.appliedFilters: ",
-        filtersStore.appliedFilters
-      );
-      filtersStore.appliedFilters = filtersStore.appliedFilters.filter(
-        (filter) => {
-          console.log("filter: ", filter);
-          filter.key !== key || filter.value !== value;
-        }
-      );
+// Helper to check if the anime is a favorite
+const isFavorite = (anime) =>
+  favorites.value.some((fav) => fav.mal_id === anime.mal_id);
 
-      if (filtersStore.appliedFilters.length < originalLength) {
-        console.log(`Removed filter with key "${key}" and value "${value}".`);
+// Remove individual filter
+const removeFilter = (key, value) => {
+  console.log("value: ", value);
+  console.log("key: ", key);
 
-        // Clear the corresponding filter in the store
-        if (key === "Status") {
-          filtersStore.status = 0; // Reset the status filter
-        } else if (key === "Type") {
-          filtersStore.type = ""; // Reset the type filter
-        }
+  // Filter out the object with the specified key and value
+  const originalLength = filtersStore.appliedFilters.length;
+  console.log(" filtersStore.appliedFilters: ", filtersStore.appliedFilters);
+  filtersStore.appliedFilters = filtersStore.appliedFilters.filter(
+    (filter) => {
+      console.log("filter: ", filter);
+      filter.key !== key || filter.value !== value;
+    }
+  );
 
-        // Reapply the filters
-        filtersStore.applyFilters(); // Call applyFilters to update the store with new filters
-      }
-    };
+  if (filtersStore.appliedFilters.length < originalLength) {
+    console.log(`Removed filter with key "${key}" and value "${value}".`);
 
-    // Clear all filters
-    const clearFilters = () => {
-      filtersStore.clearFilters(); // Reset filters in store
-      filtersStore.applyFilters(); // Reapply empty filters
-    };
+    // Clear the corresponding filter in the store
+    if (key === "Status") {
+      filtersStore.status = 0; // Reset the status filter
+    } else if (key === "Type") {
+      filtersStore.type = ""; // Reset the type filter
+    }
 
-    return {
-      animes,
-      filteredAnimes,
-      toggleFavorite: animeStore.toggleFavorite,
-      isFavorite,
-      removeFilter,
-      clearFilters,
-      loading,
-      fetchAnimes,
-      filtersStore,
-      headers,
-      filteredAnimes,
-    };
-  },
+    // Reapply the filters
+    filtersStore.applyFilters(); // Call applyFilters to update the store with new filters
+  }
 };
+
+// Clear all filters
+const clearFilters = () => {
+  filtersStore.clearFilters(); // Reset filters in store
+  filtersStore.applyFilters(); // Reapply empty filters
+};
+
+// Expose anime store methods
+const { toggleFavorite, fetchAnimes } = animeStore;
 </script>
+
 
 <style>
 .elevation-1 {
