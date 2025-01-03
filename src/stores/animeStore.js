@@ -13,6 +13,7 @@ export const useAnimeStore = defineStore('anime', () => {
   // Fetch anime data
   const fetchAnimes = async (queryParams = {}) => {
     loading.value = true;
+    console.log('loading.value: ', loading.value);
     error.value = null; // Reset error before fetching
     try {
       const response = await axios.get(API_BASE_URL, { params: queryParams });
@@ -36,7 +37,7 @@ export const useAnimeStore = defineStore('anime', () => {
     }
   };
 
-  // Computed property for loading state (can be used in components)
+  // Computed property for loading state
   const isLoading = computed(() => loading.value);
 
   // Persist favorites to localStorage

@@ -66,7 +66,7 @@
       <!-- Custom Body -->
       <template v-slot:body="{ items }">
         <!-- Loader when loading is true -->
-        <v-overlay :value="isLoading" absolute>
+        <v-overlay :value="loading" absolute>
           <v-progress-circular indeterminate color="primary" size="64" />
         </v-overlay>
 
@@ -112,7 +112,7 @@ export default {
   setup() {
     const animeStore = useAnimeStore();
     const filtersStore = useFiltersStore();
-    const { isLoading, fetchAnimes } = useAnimeStore();
+    const { fetchAnimes } = useAnimeStore();
     // Reactive values from the stores
     const animes = computed(() => animeStore.animes);
     const headers = [
@@ -123,7 +123,8 @@ export default {
       { title: "Actions", key: "actions", sortable: false, align: "end" },
     ];
     const favorites = computed(() => animeStore.favorites);
-const filteredAnimes = computed(() => animes.value)
+    const filteredAnimes = computed(() => animes.value);
+    const loading = computed(() => animeStore.loading);
     // Helper to check if the anime is a favorite
     const isFavorite = (anime) =>
       favorites.value.some((fav) => fav.mal_id === anime.mal_id);
@@ -174,7 +175,7 @@ const filteredAnimes = computed(() => animes.value)
       isFavorite,
       removeFilter,
       clearFilters,
-      isLoading,
+      loading,
       fetchAnimes,
       filtersStore,
       headers,
@@ -212,5 +213,8 @@ th {
 td {
   padding: 8px;
   text-align: left;
+}
+.v-table__wrapper {
+  min-height: 340px;
 }
 </style>
