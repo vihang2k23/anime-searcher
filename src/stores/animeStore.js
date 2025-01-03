@@ -46,15 +46,15 @@ export const useAnimeStore = defineStore('anime', () => {
 
   // Optionally, fetch anime data on store initialization
   onMounted(() => {
-    fetchAnimes(); // This can be adjusted based on whether you want auto-fetching or not
+    fetchAnimes(); 
   });
 
   return { 
     animes, 
     favorites, 
     loading, 
-    error, // Expose error to the component
-    isLoading, // Computed loading property
+    error, 
+    isLoading, 
     fetchAnimes, 
     toggleFavorite 
   };
